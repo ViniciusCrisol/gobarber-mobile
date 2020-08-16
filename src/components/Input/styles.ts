@@ -1,4 +1,5 @@
 import styled from 'styled-components/native';
+import { TextInput as Input } from 'react-native';
 
 export const Container = styled.View`
   width: 100%;
@@ -13,10 +14,7 @@ export const Container = styled.View`
   align-items: center;
 `;
 
-export const TextInput = styled.TextInput.attrs(() => ({
-  placeholderTextColor: '#666360',
-  keyboardApparence: 'dark',
-}))`
+export const TextInput = styled(Input)`
   flex: 1;
   margin-left: 16px;
 

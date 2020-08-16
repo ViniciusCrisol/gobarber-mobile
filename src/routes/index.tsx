@@ -1,23 +1,23 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 
 import SignIn from '../screens/SignIn';
 import SignUp from '../screens/SignUp';
 
-const Auth = createStackNavigator();
+const AuthStack = createStackNavigator();
 
-const routes: React.FC = () => (
-  <Auth.Navigator
-    screenOptions={{
-      headerShown: false,
-      cardStyle: {
-        backgroundColor: '#312e38',
-      },
-    }}
-  >
-    <Auth.Screen name="SignIn" component={SignIn} />
-    <Auth.Screen name="SignUp" component={SignUp} />
-  </Auth.Navigator>
+const routeProps = {
+  cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+  cardStyle: { backgroundColor: '#312e38', headerShown: false },
+};
+
+const AuthRoutes: React.FC = () => (
+  <AuthStack.Navigator headerMode="none" screenOptions={routeProps}>
+    <AuthStack.Screen name="SignIn" component={SignIn} />
+    <AuthStack.Screen name="SignUp" component={SignUp} />
+  </AuthStack.Navigator>
 );
-
-export default routes;
+export default AuthRoutes;
