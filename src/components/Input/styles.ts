@@ -1,7 +1,12 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import { TextInput as Input } from 'react-native';
 
-export const Container = styled.View`
+interface ContainerProps {
+  isFocused: boolean;
+  isErrored: boolean;
+}
+
+export const Container = styled.View<ContainerProps>`
   width: 100%;
   height: 60px;
 
@@ -9,6 +14,19 @@ export const Container = styled.View`
   margin-bottom: 8px;
   border-radius: 10px;
   background-color: #232129;
+  border: 2px #232129;
+
+  ${({ isErrored }) =>
+    isErrored &&
+    css`
+      border-color: #c53030;
+    `}
+
+  ${({ isFocused }) =>
+    isFocused &&
+    css`
+      border-color: #ff9000;
+    `}
 
   flex-direction: row;
   align-items: center;
