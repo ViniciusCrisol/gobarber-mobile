@@ -16,14 +16,16 @@ import {
 
 import logoImg from '../../assets/logo.png';
 
+import api from '../../services/api';
 import Input from '../../components/Input';
+
 import Button from '../../components/Button';
 import getValidatonErrors from '../../utils/getValidationErrors';
 
 import { Container, Title, BackToSignIn, BackToSignInText } from './styles';
 
 interface SignInFormData {
-  nmae: string;
+  name: string;
   email: string;
   password: string;
 }
@@ -35,31 +37,38 @@ const SignUp: React.FC = () => {
 
   const navigation = useNavigation();
 
-  const handleSubmit = useCallback(async (data: SignInFormData) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async (data: SignInFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório.'),
-        email: Yup.string()
-          .required('E-mail obrigatório.')
-          .email('Digite um e-mail válido.'),
-        password: Yup.string().min(6, 'No mínimo 6 dígitos.'),
-      });
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome obrigatório.'),
+          email: Yup.string()
+            .required('E-mail obrigatório.')
+            .email('Digite um e-mail válido.'),
+          password: Yup.string().min(6, 'No mínimo 6 dígitos.'),
+        });
 
-      await schema.validate(data, { abortEarly: false });
+        await schema.validate(data, { abortEarly: false });
 
-      Alert.alert(
-        'Cadastro realizado',
-        'Você já pode fazer seu logon no GoBarber.',
-      );
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidatonErrors(err);
-        formRef.current?.setErrors(errors);
+        api.post('/users', data);
+
+        Alert.alert(
+          'Cadastro realizado',
+          'Você já pode fazer seu logon no GoBarber.',
+        );
+
+        navigation.goBack();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidatonErrors(err);
+          formRef.current?.setErrors(errors);
+        }
       }
-    }
-  }, []);
+    },
+    [navigation],
+  );
 
   return (
     <>

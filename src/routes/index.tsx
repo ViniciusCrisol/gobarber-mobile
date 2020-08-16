@@ -1,23 +1,30 @@
 import React from 'react';
-import {
-  createStackNavigator,
-  CardStyleInterpolators,
-} from '@react-navigation/stack';
+import { View, ActivityIndicator } from 'react-native';
 
-import SignIn from '../screens/SignIn';
-import SignUp from '../screens/SignUp';
+import AuthRoutes from './auth.routes';
+import AppRoutes from './app.routes';
 
-const AuthStack = createStackNavigator();
+import { useAuth } from '../hooks/auth';
 
-const routeProps = {
-  cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-  cardStyle: { backgroundColor: '#312e38', headerShown: false },
+const Routes: React.FC = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#312e38',
+        }}
+      >
+        <ActivityIndicator size="large" color="#ff9000" />
+      </View>
+    );
+  }
+
+  return user ? <AppRoutes /> : <AuthRoutes />;
 };
 
-const AuthRoutes: React.FC = () => (
-  <AuthStack.Navigator headerMode="none" screenOptions={routeProps}>
-    <AuthStack.Screen name="SignIn" component={SignIn} />
-    <AuthStack.Screen name="SignUp" component={SignUp} />
-  </AuthStack.Navigator>
-);
-export default AuthRoutes;
+export default Routes;

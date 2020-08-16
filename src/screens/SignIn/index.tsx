@@ -16,9 +16,11 @@ import {
 
 import logoImg from '../../assets/logo.png';
 
+import getValidatonErrors from '../../utils/getValidationErrors';
+import { useAuth } from '../../hooks/auth';
+
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import getValidatonErrors from '../../utils/getValidationErrors';
 
 import {
   Container,
@@ -35,33 +37,39 @@ interface SignInFormData {
 }
 
 const SignIn: React.FC = () => {
+  const { signIn } = useAuth();
+
   const navigation = useNavigation();
   const passwordInputRef = useRef<TextInput>(null);
   const formRef = useRef<FormHandles>(null);
 
-  const handleSubmit = useCallback(async (data: SignInFormData) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async (data: SignInFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        email: Yup.string().required('E-mail obrigatório.'),
-        password: Yup.string().required('Senha obrigatória.'),
-      });
+        const schema = Yup.object().shape({
+          email: Yup.string().required('E-mail obrigatório.'),
+          password: Yup.string().required('Senha obrigatória.'),
+        });
 
-      await schema.validate(data, { abortEarly: false });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidatonErrors(err);
-        formRef.current?.setErrors(errors);
+        await schema.validate(data, { abortEarly: false });
+        signIn(data);
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidatonErrors(err);
+          formRef.current?.setErrors(errors);
 
-        return;
+          return;
+        }
+        Alert.alert(
+          'Erro na autenticação',
+          'Ocorreu um erro ao fazer login, cheque as credenciais.',
+        );
       }
-      Alert.alert(
-        'Erro na autenticação',
-        'Ocorreu um erro ao fazer login, cheque as credenciais.',
-      );
-    }
-  }, []);
+    },
+    [signIn],
+  );
 
   return (
     <>
